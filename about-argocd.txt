@@ -1,0 +1,48 @@
+ArgoCD application can be created using three options
+
+- Declarative "Yaml"
+- Web UI
+- argocd cli
+
+Declarative Yaml
+
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: guestbook
+  namespace: argocd
+spec:
+  destination:
+    namespace: guestbook
+    server: "https://kubernetes.default.svc"
+  project: default
+  source:
+    path: guestbook
+    repoURL: "https://github.com/mabusaa/argocd-example-apps.git"
+    targetRevision: master
+  syncPolicy:
+    syncOptions:
+      - CreateNamespace=true
+
+kubectl apply -f application.yaml
+
+kubectl get application -n argocd
+
+NAME        SYNC STATUS   HEALTH STATUS
+guestbook   OutOfSync        Missing
+
+We can run command line to verify app argocd
+
+argocd app list
+
+argocd/guestbook  https://kubernetes.default.svc  guestbook  default  Synced  Healthy  Manual      <none>      https://github.com/mabusaa/argocd-example-apps.git  guestbook  master
+
+We can create a application with cli
+
+argocd app create app-2 --repo https://github.com/mabusaa/argocd-example-apps.git --revision master --path guestbook --dest-server https://kubernetes.default.svc --dest-namespace app-2 --sync-option CreateNamespace=true
+
+
+include all sub-directories
+
+directory:
+  recurse: true
